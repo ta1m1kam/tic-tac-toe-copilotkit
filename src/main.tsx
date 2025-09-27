@@ -4,7 +4,8 @@ import { CopilotKit } from '@copilotkit/react-core'
 import { CopilotSidebar } from '@copilotkit/react-ui'
 import '@copilotkit/react-ui/styles.css'
 import './index.css'
-import App from './App.tsx'
+import './AdvancedTicTacToe.css'
+import App from './AdvancedTicTacToe.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -12,10 +13,10 @@ createRoot(document.getElementById('root')!).render(
       <CopilotSidebar
         defaultOpen={true}
         clickOutsideToClose={false}
-        instructions="あなたは○×ゲーム（三目並べ）をプレイしています。あなたはOプレイヤーで、人間がXプレイヤーです。'AI turn trigger'のreadableがあなたのターンを示したら（isAITurn: true）、すぐにボードを分析してmakeMoveアクションを使って手を打ってください。戦略的な手を打って勝利を目指してください。"
+        instructions="あなたは高度な○×ゲームAIです。MinimaxアルゴリズムとuseCopilotReadableから提供される詳細な戦略分析を使用して、最適な手を打ってください。makeStrategicMoveアクションを使用し、なぜその手を選んだか戦略的理由も説明してください。"
         labels={{
-          title: "○×ゲーム AI",
-          initial: "こんにちは！私はあなたの○×ゲームの対戦相手です。私はOで対戦します。まずはXで先手をどうぞ！"
+          title: "高度な○×ゲームAI",
+          initial: "こんにちは！私はMinimaxアルゴリズムを使用した高度な○×ゲームAIです。難易度を選択してゲームを開始してください。私は最適な戦略で対戦します！"
         }}
       >
         <App />
