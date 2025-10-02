@@ -446,7 +446,7 @@ export default function AdvancedTicTacToe() {
 
         const message = new TextMessage({
           role: MessageRole.User,
-          content: `strategicAnalysis情報からmakeStrategicMoveアクションを使って最善の手を打ってください。`,
+          content: `strategicAnalysis情報から最善の手を考察し、makeStrategicMoveアクションを使って最善の手を打ってください。`,
         });
 
         await appendMessage(message);
