@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   useCopilotAction,
   useCopilotReadable,
@@ -280,13 +280,7 @@ export default function AdvancedTicTacToe() {
   const winner = winnerData?.winner;
   const winningLine = winnerData?.line;
   const { appendMessage } = useCopilotChat();
-  const aiRef = useRef(new MinimaxAI(difficulty));
-  const renderCount = useRef(0);
-
-  // AIを更新
-  useEffect(() => {
-    aiRef.current = new MinimaxAI(difficulty);
-  }, [difficulty]);
+  const ai = useMemo(() => new MinimaxAI(difficulty), [difficulty]);
 
   // ゲームフェーズの判定
   const gamePhase = useMemo((): GamePhase => {
@@ -323,14 +317,14 @@ export default function AdvancedTicTacToe() {
         // それ以外の場合はMinimaxでスコア計算
         if (!moveScores.has(idx)) {
           testBoard[idx] = "O";
-          const score = aiRef.current.getBestMove(testBoard, false).score;
+          const score = ai.getBestMove(testBoard, false).score;
           moveScores.set(idx, Math.round(score * 10));
         }
       }
     });
 
     return { criticalPositions, moveScores };
-  }, [currentSquares]);
+  }, [currentSquares, ai]);
 
   // 脅威レベルの判定
   const threatLevel = useMemo(() => {
@@ -348,9 +342,8 @@ export default function AdvancedTicTacToe() {
   }, [currentSquares, strategicAnalysis]);
 
   // 高度な戦略情報をCopilotKitと共有
-  useCopilotReadable({
-    description: "高度な○×ゲーム戦略分析",
-    value: {
+  const copilotReadableValue = useMemo(
+    () => ({
       board: currentSquares.map((value, index) => ({
         position: index,
         value: value || "空き",
@@ -367,9 +360,7 @@ export default function AdvancedTicTacToe() {
       strategicAnalysis: {
         winProbability: calculateWinProbability(currentSquares),
         criticalPositions: strategicAnalysis.criticalPositions,
-        bestMove: !xIsNext
-          ? aiRef.current.getBestMove(currentSquares, true)
-          : null,
+        bestMove: !xIsNext ? ai.getBestMove(currentSquares, true) : null,
         threatLevel,
         possibleOutcomes: analyzePossibleOutcomes(),
       },
@@ -387,11 +378,23 @@ export default function AdvancedTicTacToe() {
       ),
 
       debug: {
-        renderCount: renderCount.current++,
-        lastUpdate: new Date().toISOString(),
         moveScores: Array.from(strategicAnalysis.moveScores.entries()),
       },
-    },
+    }),
+    [
+      currentSquares,
+      gamePhase,
+      difficulty,
+      xIsNext,
+      strategicAnalysis,
+      threatLevel,
+      ai,
+    ]
+  );
+
+  useCopilotReadable({
+    description: "高度な○×ゲーム戦略分析",
+    value: copilotReadableValue,
   });
 
   // AIアクション
@@ -455,8 +458,7 @@ export default function AdvancedTicTacToe() {
     };
 
     makeAIMove();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [xIsNext, winner, currentSquares, gamePhase, strategicAnalysis]);
+  }, [xIsNext, winner, currentSquares, appendMessage]);
 
   function handlePlay(nextSquares: SquareValue[]) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
