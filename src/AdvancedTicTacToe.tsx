@@ -3,7 +3,6 @@ import {
   useCopilotAction,
   useCopilotReadable,
   useCopilotChat,
-  useCoAgentStateRender,
 } from "@copilotkit/react-core";
 import { TextMessage, MessageRole } from "@copilotkit/runtime-client-gql";
 import "./App.css";
@@ -140,39 +139,6 @@ class MinimaxAI {
 
     return 0;
   }
-}
-
-// 戦略分析コンポーネント
-function StrategyAnalysis() {
-  useCoAgentStateRender({
-    name: "tictactoe_strategy",
-    render: ({ state }) => {
-      if (!state?.analysis) return null;
-
-      return (
-        <div className="strategy-card">
-          <h4 className="strategy-title">🧠 AI戦略分析</h4>
-          {state.analysis.currentPhase && (
-            <div className="phase-indicator">
-              ゲームフェーズ: <strong>{state.analysis.currentPhase}</strong>
-            </div>
-          )}
-          {state.analysis.threatLevel && (
-            <div className="threat-level">
-              脅威レベル:
-              <span className={`threat-${state.analysis.threatLevel}`}>
-                {state.analysis.threatLevel}
-              </span>
-            </div>
-          )}
-          {state.analysis.strategy && (
-            <div className="strategy-text">{state.analysis.strategy}</div>
-          )}
-        </div>
-      );
-    },
-  });
-  return null;
 }
 
 interface SquareProps {
@@ -524,8 +490,6 @@ export default function AdvancedTicTacToe() {
         </div>
 
         <div className="analysis-panel">
-          <StrategyAnalysis />
-
           <div className="game-info">
             <h3>📈 ゲーム情報</h3>
             <p>フェーズ: {gamePhase}</p>
