@@ -326,7 +326,7 @@ export default function AdvancedTicTacToe() {
       strategicAnalysis: {
         winProbability: calculateWinProbability(currentSquares),
         criticalPositions: strategicAnalysis.criticalPositions,
-        bestMove: !xIsNext ? ai.getBestMove(currentSquares, true) : null,
+        bestMove: ai.getBestMove(currentSquares, true),
         threatLevel,
         possibleOutcomes: analyzePossibleOutcomes(),
       },
@@ -361,6 +361,7 @@ export default function AdvancedTicTacToe() {
   useCopilotReadable({
     description: "高度な○×ゲーム戦略分析",
     value: copilotReadableValue,
+    available: "enabled",
   });
 
   // AIアクション
@@ -412,7 +413,7 @@ export default function AdvancedTicTacToe() {
 
         const message = new TextMessage({
           role: MessageRole.User,
-          content: `strategicAnalysis情報から最善の手を考察し、makeStrategicMoveアクションを使って最善の手を打ってください。`,
+          content: `あなたの番です。最善の手を打ってください。`,
         });
 
         await appendMessage(message);
